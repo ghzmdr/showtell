@@ -56,8 +56,6 @@ function renderSlide(slide) {
         data.nextPage = ''
     }
 
-    console.log(data)
-
     return headTemplate(data) + file + footTemplate(data)
 }
 

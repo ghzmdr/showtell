@@ -1,0 +1,279 @@
+*, *:after, *:before {    
+    box-sizing: border-box;
+}
+
+.App {
+    font-family: Roboto;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+}
+
+.Header {
+    width: 100%;
+    padding: 0 1rem;
+    height: 4rem;
+    background-color: #00d9ae;
+    position: relative;
+
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.Header .Hamburger {
+    -webkit-appearance: none;
+
+    height: 100%;
+    border: none;
+    outline: none;
+    padding: none;
+    background: none;
+
+    margin-right: 1rem;
+}
+
+html:not(.js) .Header .Hamburger {
+    display: none;
+}
+
+.Header h3 {
+    margin: 0;
+    display: inline-block;
+    vertical-align: top;
+    color: #fafafa;
+}
+
+.Header .Pager {
+    margin-left: auto;
+}
+
+.Header .Pager span {
+    margin: 0 0.2rem;
+}
+.elevation-1 {
+  box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.24);
+}
+
+.elevation-2 {
+  box-shadow: 0 3px 3px rgba(0,0,0,0.16), 0 3px 3px rgba(0,0,0,0.23);
+}
+
+.elevation-3 {
+  box-shadow: 0 10px 10px rgba(0,0,0,0.19), 0 6px 3px rgba(0,0,0,0.23);
+}
+
+.elevation-4 {
+  box-shadow: 0 14px 14px rgba(0,0,0,0.25), 0 10px 5px rgba(0,0,0,0.22);
+}
+
+.elevation-5 {
+  box-shadow: 0 19px 19px rgba(0,0,0,0.30), 0 6px rgba(0,0,0,0.22);
+}
+
+.PageWrapper {    
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 2rem;
+
+    background-color: #dadada;
+    flex-grow: 1;
+
+    overflow: hidden;
+}
+
+.Page {
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+
+    padding: 2rem 1.5rem;
+
+    border-radius: 2px;
+
+    background-color: #fff;
+
+    transition: transform 0.5s;
+
+    transform: translate(0vw, 0);
+
+    flex-shrink: 0;
+    flex-grow: 1;
+
+    box-shadow: 0 1px 1.5px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.24);
+}
+
+.Page.right {
+    transform: translate(120vw, 0);
+}
+
+.Page.left {
+    transform: translate(-120vw, 0);
+}
+
+
+
+
+/* HOMEPAGE */
+.Page#Home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.Page#Home h1 {
+    color: grey;
+    margin-top: -2rem;
+    margin-bottom: 0;
+}
+
+.By {
+    margin-top: 1.5rem;
+    font-family: monospace;
+    font-size: 1.2rem; 
+}
+
+.By a {
+    text-decoration: none;
+}
+
+.Drawer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0; 
+
+    background-color: #fafafa;
+    transition: transform 0.2s;
+    transform: translateX(-102%);
+    width: 40%;    
+    padding-top: 4rem;
+
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+
+    z-index: 3;
+}
+
+.Overlay {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #2b2b2b;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s 0.1s;
+
+    z-index: 2;
+}
+
+.App.drawer-open .Drawer {
+    transform: translateX(0);
+}
+
+.App.drawer-open .Overlay {
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    pointer-events: initial;
+}
+
+.Drawer ul li a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    padding: 1rem 0 1rem 1rem;
+    font-weight: bold;
+}
+
+.Drawer ul {
+    margin: 0;
+    padding: 0;
+}
+
+.Drawer ul li {
+    list-style-type: none;
+}
+
+.Drawer ul li:not(last-child) a {
+    border-bottom: 1px solid rgba(22, 22, 22, 0.2);
+}
+
+.Drawer ul li a.current {
+    color: orange;
+    transition: color 0.1s;
+}
+
+.Navigation {
+    position: fixed;
+    bottom: 0.5rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    z-index: 1;
+}
+
+.Navigation a {
+    border-radius: 50%;
+    background-color: #E57373;
+    margin: 0.5rem 0;    
+
+    text-decoration: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+
+    color: white;
+    transition: transform 0.2s, opacity 0.2s;
+
+    cursor: default;
+}
+
+.Navigation a[href] {
+    cursor: pointer;
+}
+
+.Navigation a::selection, .Navigation span::selection {
+    background-color: transparent;
+}
+
+.Navigation .Next{
+    width: 3rem;
+    height: 3rem;
+
+    color: transparent;
+    transform: scale(0.5);
+    position: relative;
+    z-index: 2;
+}
+
+.Navigation .Prev {
+    width: 2rem;
+    height: 2rem;
+    
+    align-self: center;
+    background-color: #90CAF9;
+    
+    transform: translate(0, 3.5rem) scale(0.5);
+    position: relative;
+    z-index: 1;
+}
+
+.Navigation:hover .Next, .Navigation:hover .Prev {    
+    color: white;
+    transform: translate(0, 0) scale(1);
+}

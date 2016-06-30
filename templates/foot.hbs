@@ -1,0 +1,24 @@
+        </div>
+
+        <div class="Overlay"></div>
+        <div class="Drawer"><ul></ul></div>
+
+        <div class="Navigation">
+            <a class="Prev internal-link material-icons elevation-2" 
+                    {{#if prevPage}} 
+                        href="{{prevPage}}"
+                    {{/if}}>
+                chevron_left
+            </a>
+            <a class="Next internal-link material-icons elevation-2" 
+                    {{#if nextPage}} 
+                        href="{{nextPage}}"
+                    {{/if}}>
+                chevron_right
+            </a>
+        </div>
+    </div>
+
+    <script src="/scripts/main.js"></script>
+</body>
+</html>

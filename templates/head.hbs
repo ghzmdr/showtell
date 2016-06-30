@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Progressive Web Apps - {{title}}</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#00d9ae">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Show &amp; Tell about the Progressive Web Apps Dev Summit.">
+
+    
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Roboto:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/normalize.css">
+    <link rel="stylesheet" href="/styles/main.css">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="manifest" href="/manifest.json"/>
+    <link rel="apple-touch-icon" href="img/icon-48.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="img/icon-96.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="img/icon-196.png">
+</head>
+<body>
+    <div class="App">
+        <header class="Header elevation-2">
+            <button class="Hamburger material-icons">menu</button>
+            <h3>PWA - <span class="SlideTitle">{{title}}</span></h3>
+
+            <div class="Pager"><span class="Current">{{pageNumber}}</span>/<span class="Total">{{totalPages}}</span></div>
+        </header>        
+        <div class="PageWrapper">

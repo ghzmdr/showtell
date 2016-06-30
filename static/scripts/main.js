@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/scripts/service-worker.js')
+    navigator.serviceWorker.register('/service-worker.js', {scope: '/'})
         .then(function (registration) {
 
             if(registration.installing) {
@@ -10,6 +10,13 @@ if ('serviceWorker' in navigator) {
               console.log("[SERVICE WORKER] Active")
             }
             
+
+            if (navigator.serviceWorker.controller) {
+                console.log('[SERVICE WORKER] Controlling')
+            } else {
+                console.log('[SERVICE WORKER] NOT Controlling')
+            }
+
         }).catch(function (error) {
             console.log("[SERVICE WORKER] Registration FAILED. ", error)
         })

@@ -184,7 +184,7 @@ function onStateChange(event) {
     if (/^\/pages\/.*/.test(location.pathname)) {
         fetchPage(location.pathname)        
     } else if (location.pathname === '/') {
-        fetchPage('/pages/home')
+        fetchPage('/')
     }
 
     setCurrentSlide(location.pathname)

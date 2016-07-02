@@ -16,7 +16,7 @@ Application.prototype = {
 
 	registerWorker: function () {
 		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/scripts/service-worker.js')
+			navigator.serviceWorker.register('/service-worker.js', {scope: '/'})
 				.then(function (registration) {
 
 					if(registration.installing) {

@@ -49,16 +49,13 @@ Application.prototype = {
 		this.pagerCurrent = document.querySelector('.Pager .Current')
 		
 		this.navigation = {
+			el: document.querySelector('.Navigation'),
 			prev: navigationPrev = document.querySelector('.Navigation .Prev'),
 			next: navigationNext = document.querySelector('.Navigation .Next')
 		}
 		
-		this.navigation.prev.addEventListener('click', this.prevSlide)
-		this.navigation.next.addEventListener('click', this.nextSlide)
-
-		this.navigation.prev.href = ''
-		this.navigation.next.href = ''
-
+		this.navigation.prev.addEventListener('click', this.prevSlide, {passive: true})
+		this.navigation.next.addEventListener('click', this.nextSlide, {passive: true})
 
 		this.drawer = document.querySelector('.Drawer')
 		this.slidesList = this.drawer.querySelector('ul')
@@ -71,36 +68,8 @@ Application.prototype = {
 		this.overlay.addEventListener('click', this.closeDrawer, false)
 	},
 
-	prevSlide: function(e) {
-		e.preventDefault()
-		e.stopPropagation()
-
-		if (this.currentIndex > 0) {
-			this.gotoSlide(this.currentIndex -1)
-		}
-	},
-
-	nextSlide: function(e) {
-		e.preventDefault()
-		e.stopPropagation()
-
-		if (this.currentIndex < this.slides.length -1) {
-			this.gotoSlide(this.currentIndex +1)
-		}
-	},
-
-	gotoSlide: function(index) {
-		if (index === this.currentIndex) {
-			return
-		}
-
-		if (index === 0) {
-			history.pushState(null, null, '/')
-		} else {        
-			history.pushState(null, null, '/pages/' + this.slides[index].slug)
-		}
-
-		this.onStateChange()
+	isTouch: function() {
+		return 'ontouchstart' in document.documentElement;
 	},
 
 	initSlides: function(slides) {
@@ -160,6 +129,12 @@ Application.prototype = {
 				}
 			}
 		}
+
+		var prev = this.currentIndex > 0 ? this.currentIndex -1 : this.currentIndex
+		var next = this.currentIndex < this.slides.length-1 ? this.currentIndex +1 : this.currentIndex
+
+		this.navigation.prev.href = '/pages/' + this.slides[prev].slug
+		this.navigation.next.href = '/pages/' + this.slides[next].slug
 
 		this.title.textContent = this.slides[this.currentIndex].name
 		this.pagerCurrent.textContent = this.currentIndex

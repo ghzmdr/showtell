@@ -94,6 +94,7 @@ html:not(.js) .Header .Hamburger {
     width: 90%;
     height: 90%;
     position: absolute;
+    overflow-y: auto; 
     top: 5%;
     left: 5%;
 
@@ -162,6 +163,7 @@ html:not(.js) .Header .Hamburger {
 
     box-shadow: 0 2px 20px rgba(0,0,0,0.5);
 
+    will-change: transform;
     z-index: 3;
 }
 
@@ -176,7 +178,8 @@ html:not(.js) .Header .Hamburger {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s 0.1s;
-
+    
+    will-change: opacity;
     z-index: 2;
 }
 
@@ -224,6 +227,7 @@ html:not(.js) .Header .Hamburger {
     flex-direction: column;
 
     z-index: 1;
+    padding: 5rem 0 0 5rem;
 }
 
 .Navigation a {
@@ -259,6 +263,8 @@ html:not(.js) .Header .Hamburger {
     transform: scale(0.5);
     position: relative;
     z-index: 2;
+
+    pointer-events: none;
 }
 
 .Navigation .Prev {
@@ -271,9 +277,112 @@ html:not(.js) .Header .Hamburger {
     transform: translate(0, 3.5rem) scale(0.5);
     position: relative;
     z-index: 1;
+    pointer-events: none;
 }
 
-.Navigation:hover .Next, .Navigation:hover .Prev {    
+.Navigation:hover .Prev,
+.Navigation:hover .Next {
     color: white;
     transform: translate(0, 0) scale(1);
+    pointer-events: all;
+}
+
+br {
+    height: 0.7rem;
+    display: block;
+    content: '';
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.Page h3 {
+    font-size: 2rem;
+    margin-top: 0;
+}
+
+.Page p {
+    line-height: 1.2em;
+}
+
+.Page p:not(:last-child) {
+    margin-bottom: 1.5rem;
+}
+
+.Page > img, .Page figure {
+    float: right;
+    height: 40%;
+    margin: 0 0 2rem 2rem;
+    text-align: center;
+}
+
+
+.Page figcaption {
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+}
+.Page figure img {
+    height: 100%;
+    display: inline;
+}
+
+.Page code {
+    
+    background-color: #dbdbdb;
+    padding: 0.2rem 0.5rem;
+}
+
+code.multiline {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    margin: 1rem 0;
+    padding: 1rem 0.5rem;
+}
+
+code br {
+    background-color: #dbdbdb;
+}
+
+.BottomLinks {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 900px) {
+    .Page {
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+    }
+
+    .Navigation .Prev,
+    .Navigation .Next {
+        color: white;
+        transform: translate(0, 0) scale(1);
+        pointer-events: all;
+    }
+}
+
+@media (max-width: 500px) {
+    .Page > img, .Page figure {
+        display: block;
+        float: none;
+        height: auto;
+        width: 90%;
+        margin: 1rem auto 2rem;
+    }
+
+    .Page figure img {
+        width: 100%;
+        height: auto;
+    }
+
+    .Page {
+        padding-bottom: 10rem;
+    }
+
+    .Drawer {
+        width: 75%;
+    }
 }

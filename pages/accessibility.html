@@ -1,0 +1,49 @@
+<div class="Page" id="Accessibility">
+	<h3>Accessibility</h3>
+	<p>
+		Web pages are used by people with different needs. Blind people use smartphones, people with super-expensive 2g networks shop online.
+		<br>
+		They're enabled of doing so by adopting best practices on the web.
+	</p>
+	
+	<h4>Design</h4>
+	<p>
+		When designing content-centered apps, we should mind to make that content enjoyable under every condition.
+		Not only for fully-disabled people, but for every context our users might want to.
+		<br>
+		Using clear, high constrasting colors, for example, helps reading in every condition.
+	</p>
+
+	<h4>Semantics & Reachability</h4>
+	<p>
+		For people who use screen readers or other tools to browse the web, there are some good practices which will improve their UX.
+		<br>
+		Using semantically correct tags helps reconstructing the meaning of the document, and interpreting interactive controls.
+		For example using anchors for browsing content and buttons for triggering actions is a good way to improve the experience.
+		<br>
+
+		For people which relies on indirect input devices is really important to have focusable elements, and to have them in a meaningful order.
+		To provide them a better experience we should put care in using <code>tabindex</code> property, or hiding off-screen content.
+		<br>
+		When thing get too complicated to manage this way, there's the <a href="https://github.com/robdodson/Detabinator">detabinator</a> library.
+	</p>
+
+	<h4>Slow connections</h4>
+	<p>
+		By adopting network best practices and evolving our design to be performance-centric, we can create lighting fast experiences that work even on laggy networks.
+		<br>
+		Service Workers can help us in doing so, by using caches and contacting the network only when strictly needed to fetch new content.
+
+	</p>
+	<p>
+		These users also are sometimes forced to make a choice on how to use their limited data, and can't permit to dowload applications.
+		<br>
+		By using service workers we get installable web applications that can reach the user's homescreen.
+		These will feel like native apps with the advantage of being lighting fast without requiring MBs to be installed.
+		<br>
+		By adopting progressive techniques we can make sure these run smooth even on less capable devices, and on those whith few MBs of storage.
+	</p>
+	<p>
+		Conversion rates for websites which follow these practices are extremely high, also because this pattern forces you to rethink your whole flow and strip it to the bare working minimum, then polish it up if possible.
+	</p>
+</div>

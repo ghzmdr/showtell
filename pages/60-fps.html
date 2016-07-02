@@ -1,0 +1,75 @@
+<div class="Page" id="60fps">
+	<h3>60 FPS</h3>
+	<figure>
+		<img src="/images/60-fps.png" alt="">
+		<figcaption>Constraints we have for our UI to feel sleek.</figcaption>
+	</figure>
+	<p>
+		Native applications are often prefered because they're smoother.
+		<br/>
+		They have access to more performance so they can privide a more enjoyable UI.
+	</p>
+	<p>
+		By analyzing what we really need and applying modern techniques we can achieve that on the web too. 
+	</p>
+	<h4>Layer Promotion</h4>
+	<p>
+		Select <b>Primed elements</b>, those which are hierarchically separated in your UI and will be animated.
+		<br>
+		Promote those layers by establishing a stacking context, so transitions will be smoother.
+		<br>
+		This can be done via the <code>will-change</code> CSS property. Statically for content which is known to change, dinamically for elements which we're not sure will be interacted with. 
+		<br>
+		The only properties to be changed (thus will-change set to) are <code>transform</code> and <code>opacity</code> 
+	</p>
+	<h4>Passive Listeners</h4>
+	<p>
+		By passing <code>{passive: true}</code> to the <code>addEventListener</code> for listeners such as <code>touchmove</code>, <code>scroll</code>, <code>mousemove</code> we can promise to the browser that we won't call <code>preventDefault()</code> so it can ship the frame without waiting for our handler to quit.
+	</p>
+	<h4>FLIP</h4>
+	<p>
+		FLIP is a guideline for creating runtime animations, it describes a flow for obtaining maximum performance while using non-safe properties like <code>width</code> <code>left</code>, etc.
+		<br>
+		It does count on applying those properties only once. So just 1 Style and 1 Layout will happen in the browser.
+		<br>
+		No transitions are applied on these properties, this will usually happen in less than 100ms.
+		<br>
+
+		Full flow:
+		<ul>
+			<li>Snapshot <b>F</b>irst state (position and opacity).</li>
+			<li>Apply the <b>L</b>ast state and snapshot it.</li>
+			<li>Calculate transforms needed to transition.</li>
+			<li><b>I</b>nvert the animation (to restore the initial state).</li>
+			<li><b>P</b>lay it forwards.</li>
+		</ul>
+		
+		which translates to:
+
+		<code class="multiline">
+			var first = item.getBoundingClientRect()<br>
+			item.classList.add('last')<br>
+			<br>
+			// [...] wait for changes to be propagated in the browser (Styles + Layout)<br>
+			var last = item.getBoundingClientRect()<br>
+			<br>
+			// [...] calculate needed transforms<br>
+			<br>
+			// apply them to revert back to initial position<br>
+			item.style.transform = "[...]"<br>
+			<br>
+			// switch on CSS transitions <br>
+			item.classList.add('animatable')<br>
+			<br>
+			//wipe transform property to play the animation forwards <br>
+			item.style.transform = ""
+		</code>
+	</p>
+	<div class="BottomLinks">
+		<a href="http://jankfree.org/"><b>JankFree</b></a> - Resources on developing smooth UIs,
+		<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/will-change"><b>Layer Promotion</b></a> - with will-change specs,
+		<a href="https://github.com/WICG/EventListenerOptions"><b>EventListenerOptions</b></a> - Specific for the passive events,
+		<a href="//bit.ly/render-perf"><b>Google</b></a> - Rendering performance best practices,
+		<a href="https://github.com/GoogleChrome/ui-element-samples/blob/gh-pages/expand-collapse/demo.js"><b>FLIP</b></a> - Sample implementation 
+	</div>
+</div>

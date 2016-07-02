@@ -17,7 +17,7 @@ app.use('/slides.json', express.static('slides.json'))
 app.use('/manifest.json', express.static('manifest.json'))
 
 app.get('/', function (req, res) {
-    res.status(200).send(renderSlide(findSlideByField('slug', 'home')))
+    res.status(200).send(renderSlide(findSlideByField('indexRoute', true)))
 })
 
 app.get('/pages/:slug', function (req, res) {

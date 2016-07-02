@@ -1,7 +1,7 @@
 [{
     "slug": "home",
     "name": "Home",
-    "index": true
+    "indexRoute": true
 },{
     "slug": "intro",
     "name": "Intro"

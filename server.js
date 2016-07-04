@@ -17,13 +17,18 @@ app.use('/slides.json', express.static('slides.json'))
 app.use('/manifest.json', express.static('manifest.json'))
 
 app.get('/', function (req, res) {
-    res.status(200).send(renderSlide(findSlideByField('slug', 'home')))
+    res.status(200).send(renderSlide(findSlideByField('indexRoute', true)))
 })
 
 app.get('/pages/:slug', function (req, res) {
     var slide = findSlideByField('slug', req.params.slug)
+    
     if (!slide) {
-        res.status(404).send('Not Found')
+        res.send(renderSlide({
+            "slug": "404",
+            "name": "404"
+        }))
+
         return
     }
 
@@ -48,12 +53,6 @@ function renderSlide(slide) {
         }
     } else {
         data.prevPage = ''
-    }
-
-    if (slide.orderNumber < slides.length -1) {
-        data.nextPage = '/pages/' + slides[slide.orderNumber +1].slug
-    } else {
-        data.nextPage = ''
     }
 
     return headTemplate(data) + file + footTemplate(data)

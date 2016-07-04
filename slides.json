@@ -1,8 +1,32 @@
 [{
     "slug": "home",
     "name": "Home",
-    "index": true
+    "indexRoute": true
 },{
     "slug": "intro",
     "name": "Intro"
+}, {
+	"slug": "offline-first",
+	"name": "Offline First"	
+}, {
+	"slug": "service-workers",
+	"name": "Service Workers"	
+}, {
+	"slug": "push-notifications",
+	"name": "Push Notifications"	
+}, {
+	"slug": "60-fps",
+	"name": "60 fps"	
+}, {
+	"slug": "accessibility",
+	"name": "Accessibility"	
+}, {
+	"slug": "progresssive-enhancement",
+	"name": "Progresssive Enhancement"	
+}, {
+	"slug": "installability",
+	"name": "Installability"	
+}, {
+	"slug": "outro",
+	"name": "Outro"	
 }]

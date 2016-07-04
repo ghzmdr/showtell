@@ -1,7 +1,10 @@
-var CACHE_NAME = 'v1'
+this.addEventListener('install', onInstall)
+this.addEventListener('fetch', onFetch)
 
-var CAHCED_DEFAULTS = [
+var CACHE_NAME = 'v1'
+var assets = [
     '/',
+    '/pages/404',
 
     '/styles/main.css',
     '/styles/normalize.css',
@@ -13,53 +16,42 @@ var CAHCED_DEFAULTS = [
     'https://fonts.googleapis.com/css?family=Material+Icons|Roboto:400,700'
 ]
 
-this.addEventListener('install', onInstall)
-this.addEventListener('fetch', onFetch)
-
-
-
 function onInstall(event) {
     event.waitUntil(
         caches.open(CACHE_NAME).then(function (cache) {
-            return cache.addAll(CAHCED_DEFAULTS)
+            return cache.addAll(assets)
+        }).then(function () {
+            self.skipWaiting()
         })
     )
 }
 
-// Cache first strategy
 function onFetch(event) {
-    
     event.respondWith(
-        // Try to grab from cache
-        caches.match(event.request)
-            .then(function (response) {
 
-                // If caches has response use that
+        caches.match(event.request)
+            .then(function(response){
                 if (response) {
                     return response
                 }
 
-                var request = event.request.clone();
+                var fetchRequest = event.request.clone()
 
-                // Else fetch it from network
-                return fetch(request)
-                    .then(function (response) {
-                        
-                        // If got a fancy response do not cache
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                return fetch(fetchRequest)
+                        .then(function(response) {
+                            if (!response || response.status !== 200 || response.type !== 'basic') {
+                                return response
+                            }
+
+                            var responseToCache = response.clone()
+
+                            caches.open(CACHE_NAME)
+                                .then(function(cache) {
+                                    cache.put(event.request, responseToCache)
+                                })
+
                             return response
-                        }
-
-                        //Else cache it for the next time
-                        var cacheableResponse = response.clone()
-
-                        caches.open(CACHE_NAME)
-                            .then(function (cache) {
-                                cache.put(event.request, cacheableResponse)
-                            })
-
-                        return response
-                    })
+                        })
             })
     )
 }

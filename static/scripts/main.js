@@ -1,248 +1,257 @@
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js', {scope: '/'})
-        .then(function (registration) {
-
-            if(registration.installing) {
-              console.log("[SERVICE WORKER] Installing")
-            } else if(registration.waiting) {
-              console.log("[SERVICE WORKER] Installed")
-            } else if(registration.active) {
-              console.log("[SERVICE WORKER] Active")
-            }
-            
-
-            if (navigator.serviceWorker.controller) {
-                console.log('[SERVICE WORKER] Controlling')
-            } else {
-                console.log('[SERVICE WORKER] NOT Controlling')
-            }
-
-        }).catch(function (error) {
-            console.log("[SERVICE WORKER] Registration FAILED. ", error)
-        })
+var Application = function() {
+	this.autobind()
+	this.registerWorker()
+	this.initGUI()
+	this.start()
 }
 
-document.querySelector('html').classList.add('js')
+Application.prototype = {
+	autobind: function () {
+		for (var k in this) {
+			if (typeof this[k] == 'function') {
+				this[k] = this[k].bind(this)
+			}
+		}
+	},
 
-var PAGES
-var currentSlide = 0
+	registerWorker: function () {
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/service-worker.js', {scope: '/'})
+				.then(function (registration) {
 
-var drawer = document.querySelector('.Drawer')
-var drawerList = drawer.querySelector('ul')
+					if(registration.installing) {
+					  console.log("[SERVICE WORKER] Installing")
+					} else if(registration.waiting) {
+					  console.log("[SERVICE WORKER] Installed")
+					} else if(registration.active) {
+					  console.log("[SERVICE WORKER] Active")
+					}
 
-var pagerCurrent = document.querySelector('.Pager .Current')
-var pagerTotal = document.querySelector('.Pager .Total')
+					if (navigator.serviceWorker.controller) {
+						console.log('[SERVICE WORKER] Controlling')
+					} else {
+						console.log('[SERVICE WORKER] NOT Controlling')
+					}
+					
+				}).catch(function (error) {
+					console.log("[SERVICE WORKER] Registration FAILED. ", error)
+				})
+		}
+	},
 
-var navigationNext = document.querySelector('.Navigation .Next')
-var navigationPrev = document.querySelector('.Navigation .Prev')
+	initGUI: function () {
+		document.querySelector('html').classList.add('js')
+		
+		window.addEventListener('popstate', this.onStateChange);
+		document.addEventListener('click', this.onNavigation);
+		
 
-var slideTitle = document.querySelector('.SlideTitle')
+		this.app = document.querySelector('.App')
 
-navigationPrev.addEventListener('click', prevSlide)
-navigationNext.addEventListener('click', nextSlide)
+		this.title = document.querySelector('.SlideTitle')
 
-navigationPrev.href = ''
-navigationNext.href = ''
+		this.pageWrapper = document.querySelector('.PageWrapper')
+		this.currentPage = document.querySelector('.Page')
+		this.pagerCurrent = document.querySelector('.Pager .Current')
+		
+		this.navigation = {
+			el: document.querySelector('.Navigation'),
+			prev: navigationPrev = document.querySelector('.Navigation .Prev'),
+			next: navigationNext = document.querySelector('.Navigation .Next')
+		}
+		
+		this.navigation.prev.addEventListener('click', this.prevSlide, {passive: true})
+		this.navigation.next.addEventListener('click', this.nextSlide, {passive: true})
 
-function prevSlide(e) {
-    e.preventDefault()
-    e.stopPropagation()
+		this.drawer = document.querySelector('.Drawer')
+		this.slidesList = this.drawer.querySelector('ul')
+		this.drawer.isOpen = false
 
-    if (currentSlide > 0) {
-        gotoSlideByIndex(currentSlide -1)
-    }
+		this.menuBtn = document.querySelector('.Hamburger')
+		this.menuBtn.addEventListener('click', this.toggleDrawer, false)
+		
+		this.overlay = document.querySelector('.Overlay')
+		this.overlay.addEventListener('click', this.closeDrawer, false)
+	},
+
+	isTouch: function() {
+		return 'ontouchstart' in document.documentElement;
+	},
+
+	initSlides: function(slides) {
+		this.slides = slides
+
+		slides.forEach(function (page, index) {
+			if (page.indexRoute) {
+				return
+			}
+
+			var li = document.createElement('li')
+			var a = document.createElement('a')
+			a.textContent = page.name
+			a.classList.add('internal-link')
+			a.href = '/pages/' + page.slug
+			li.appendChild(a)
+
+			this.slidesList.appendChild(li)
+		}.bind(this))
+	},
+
+	start: function() {
+		var oldTransion = this.currentPage.style.transition
+		this.currentPage.style.transition = 'none'
+		this.currentPage.classList.add('right')
+
+		fetch('/slides.json')
+			.then(function(response) {
+				return response.json()
+			}).then(function (slides) {
+				this.initSlides(slides)
+				
+				this.currentPage = document.querySelector('.Page')
+				this.setCurrentSlide(location.pathname)
+				
+				this.currentPage.style.transition = oldTransion
+				this.doTransitionIn(this.currentPage)
+		}.bind(this))
+	},
+
+	setCurrentSlide: function(path) {
+		if (path.indexOf('404') >= 0) {
+			return
+		}
+
+		var current = this.slidesList.querySelector('a.current')
+		if (current) {
+			current.classList.remove('current')
+		}
+
+		var found = false
+		if (path === '/') {
+			this.currentIndex = 0
+			found = true
+		} else {    
+			var anchors = this.slidesList.querySelectorAll('a')
+			for (var ai = 0; ai < anchors.length; ++ai) {
+				var a = anchors[ai]
+				if (a.href == location.href) {
+					a.classList.add('current')
+					this.currentIndex = ai + 1
+					found = true
+					break;
+				}
+			}
+		}
+
+		if (found) {
+			var prev = this.currentIndex > 0 ? this.currentIndex -1 : this.currentIndex
+			var next = this.currentIndex < this.slides.length-1 ? this.currentIndex +1 : this.currentIndex
+
+			this.navigation.prev.href = '/pages/' + this.slides[prev].slug
+			this.navigation.next.href = '/pages/' + this.slides[next].slug
+
+			this.title.textContent = this.slides[this.currentIndex].name
+			this.pagerCurrent.textContent = this.currentIndex			
+		}
+	},
+
+	toggleDrawer: function() {
+		if (this.app.classList.contains('drawer-open')) {
+			this.closeDrawer()
+		} else {
+			this.openDrawer()
+		}
+	},
+
+	openDrawer: function() {
+		this.app.classList.add('drawer-open')
+	},
+
+	closeDrawer: function() {
+		this.app.classList.remove('drawer-open')
+	},
+
+	onNavigation: function() {
+		if (event.target.tagName !== 'A' || !event.target.classList.contains('internal-link')) {
+			return
+		}
+
+		event.preventDefault()
+		event.stopPropagation()
+
+		if (event.target.href === location.href) {
+			return
+		}
+
+		var request = event.target.href
+		var host = location.host
+
+		history.pushState(null, null, request)
+		this.onStateChange()
+	},
+
+	onStateChange: function(event) {
+		if (/^\/pages\/.*/.test(location.pathname)) {
+			this.fetchPage(location.pathname)        
+		} else if (location.pathname === '/') {
+			this.fetchPage('/pages/home')
+		}
+
+		this.setCurrentSlide(location.pathname)
+	},
+
+	fetchPage: function(url) {
+		fetch(url)
+			.then(function (result) {return result.text()})
+			.then(this.switchPage)
+			.catch(this.displaySadPage)
+	},
+
+	switchPage: function(result) {
+
+		var tmpWrapper = document.createElement('div')
+		tmpWrapper.innerHTML = result
+
+		var nextPage = tmpWrapper.querySelector('.Page')
+		nextPage.classList.add('right')
+		this.pageWrapper.appendChild(nextPage)
+
+		if (this.currentPage) {
+			this.doTransitionOut(this.currentPage)
+				.then(function () {
+					this.pageWrapper.removeChild(this.currentPage)
+					this.currentPage = document.querySelector('.Page')
+				}.bind(this))
+
+			this.doTransitionIn(nextPage)
+		}
+	},
+
+	doTransitionOut: function(element) {
+		return new Promise(function (resolve, reject) {
+			element.addEventListener('transitionend', onTransitionEnd)
+			element.classList.add('left')
+
+			function onTransitionEnd () {            
+				element.removeEventListener('transitionend', onTransitionEnd)
+				resolve()
+			};
+		})
+	},
+
+	doTransitionIn: function(element) {
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () {
+				element.classList.remove('right')
+			})
+		})
+	},
+
+	displaySadPage: function() {
+		this.fetchPage('/pages/404')
+	}
 }
 
-function nextSlide(e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (currentSlide < PAGES.length-1) {
-        gotoSlideByIndex(currentSlide +1)
-    }
-}
-
-function gotoSlideByIndex(index) {
-    if (index === currentSlide) {
-        return
-    }
-
-    if (index === 0) {
-        history.pushState(null, null, '/')
-    } else {        
-        history.pushState(null, null, '/pages/' + PAGES[index].slug)
-    }
-
-    onStateChange()
-}
-
-window.onload = function () {
-
-    var oldTransion = page.style.transition
-    page.style.transition = 'none'
-    page.classList.add('right')
-
-    fetch('/slides.json')
-        .then(function(response) {
-            return response.json()
-        }).then(function(pages) {
-            PAGES = pages
-
-            PAGES.forEach(function (page, index) {
-                if (page.index) {
-                    return
-                }
-
-                var li = document.createElement('li')
-                var a = document.createElement('a')
-                a.textContent = page.name
-                a.classList.add('internal-link')
-                a.href = '/pages/' + page.slug
-                li.appendChild(a)
-
-                drawerList.appendChild(li)
-            })
-
-            pagerTotal.textContent = PAGES.length -1
-
-            page = document.querySelector('.Page')
-            setCurrentSlide(location.pathname)
-            page.style.transition = oldTransion
-            doTransitionIn(page)
-        })
-}
-
-function setCurrentSlide(path) {
-    var current = drawerList.querySelector('a.current')
-    if (current) {
-        current.classList.remove('current')
-    }
-
-    if (path === '/') {
-        currentSlide = 0
-    } else {    
-        var anchors = drawerList.querySelectorAll('a')
-        for (var ai = 0; ai < anchors.length; ++ai) {
-            var a = anchors[ai]
-            if (a.href == location.href) {
-                a.classList.add('current')
-                currentSlide = ai + 1
-                break;
-            }
-        }
-    }
-
-    slideTitle.textContent = PAGES[currentSlide].name
-    pagerCurrent.textContent = currentSlide || 0
-}
-
-var app = document.querySelector('.App')
-app.isOpen = false
-
-var menuBtn = document.querySelector('.Hamburger')
-menuBtn.addEventListener('click', toggleDrawer, false)
-
-var overlay = document.querySelector('.Overlay')
-overlay.addEventListener('click', closeDrawer, false)
-
-function toggleDrawer() {
-    if (app.classList.contains('drawer-open')) {
-        closeDrawer()
-    } else {
-        openDrawer()
-    }
-}
-
-function openDrawer() {
-    app.classList.add('drawer-open')
-}
-
-function closeDrawer() {
-    app.classList.remove('drawer-open')
-}
-
-function onNavigation (event) {    
-    if (event.target.tagName !== 'A' || !event.target.classList.contains('internal-link')) {
-        return
-    }
-
-    event.preventDefault()
-    event.stopPropagation()
-
-    if (event.target.href === location.href) {
-        return
-    }
-
-    var request = event.target.href
-    var host = location.host
-
-    history.pushState(null, null, request)
-    onStateChange()
-}
-
-function onStateChange(event) {
-    if (/^\/pages\/.*/.test(location.pathname)) {
-        fetchPage(location.pathname)        
-    } else if (location.pathname === '/') {
-        fetchPage('/')
-    }
-
-    setCurrentSlide(location.pathname)
-}
-
-window.addEventListener('popstate', onStateChange);
-document.addEventListener('click', onNavigation);
-
-var pageWrapper = document.querySelector('.PageWrapper')
-var page = document.querySelector('.Page')
-
-function fetchPage(url) {
-    fetch(url)
-        .then(function (result) {return result.text()})
-        .then(switchPage)
-        .catch(displaySadPage)
-}
-
-function switchPage(result) {
-
-    var tmpWrapper = document.createElement('div')
-    tmpWrapper.innerHTML = result
-
-    var nextPage = tmpWrapper.querySelector('.Page')
-    nextPage.classList.add('right')
-    pageWrapper.appendChild(nextPage)
-
-    if (page) {
-        doTransitionOut(page)
-            .then(function () {
-                pageWrapper.removeChild(page)
-                page = document.querySelector('.Page')
-            })
-
-        doTransitionIn(nextPage)
-    }
-}
-
-function doTransitionOut(element) {
-    return new Promise(function (resolve, reject) {
-        element.addEventListener('transitionend', onTransitionEnd)
-        element.classList.add('left')
-
-        function onTransitionEnd () {            
-            element.removeEventListener('transitionend', onTransitionEnd)
-            resolve()
-        };
-    })
-}
-
-function doTransitionIn(element) {
-    requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-            element.classList.remove('right')
-        })
-    })
-}
-
-function displaySadPage() {
-    debugger
+window.onload = function() {
+	application = new Application()
 }

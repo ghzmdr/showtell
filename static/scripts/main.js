@@ -117,10 +117,6 @@ Application.prototype = {
 	},
 
 	setCurrentSlide: function(path) {
-		if (path.indexOf('404') >= 0) {
-			return
-		}
-
 		var current = this.slidesList.querySelector('a.current')
 		if (current) {
 			current.classList.remove('current')
@@ -147,7 +143,7 @@ Application.prototype = {
 			var prev = this.currentIndex > 0 ? this.currentIndex -1 : this.currentIndex
 			var next = this.currentIndex < this.slides.length-1 ? this.currentIndex +1 : this.currentIndex
 
-			this.navigation.prev.href = '/pages/' + this.slides[prev].slug
+			this.navigation.prev.href = prev === 0 ? '/' : '/pages/' + this.slides[prev].slug
 			this.navigation.next.href = '/pages/' + this.slides[next].slug
 
 			this.title.textContent = this.slides[this.currentIndex].name
